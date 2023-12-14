@@ -11,37 +11,106 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid()) @db.Uuid
-  username String
-  email    String
-  password String
-  cart     Cart?
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
 
-  @@unique([email])
+  username String @unique
+  email    String @unique
+  password String
+
+  cart   Cart?  @relation(fields: [cartId], references: [id])
+  cartId String @default(uuid()) @map("cart_id") @db.Uuid
+
+  refreshToken String?
+
+  orders Order[]
+
+  @@unique([cartId])
 }
 
 model Cart {
-  id       String    @id @default(uuid()) @db.Uuid
-  userId   String @default(uuid()) @db.Uuid
-  user     User      @relation(fields: [userId], references: [id])
-  products Product[]
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz()
 
-  @@unique([userId])
+  total Int
+
+  user  User?
+  items CartItem[]
+}
+
+model CartItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  quantity Int
+  price    Int
+
+  cart   Cart   @relation(fields: [cartId], references: [id])
+  cartId String @default(uuid()) @map("cart_id") @db.Uuid
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @default(uuid()) @map("product_id") @db.Uuid
+
+  @@map("Cart_item")
+}
+
+model Order {
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  total Int
+
+  user   User?  @relation(fields: [userId], references: [id])
+  userId String @default(uuid()) @map("user_id") @db.Uuid
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  quantity Int
+  price    Int
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @default(uuid()) @map("order_id") @db.Uuid
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @default(uuid()) @map("product_id") @db.Uuid
+
+  @@map("Order_item")
 }
 
 model Product {
-  id          String     @id @default(uuid()) @db.Uuid
-  name        String
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  name        String   @unique
+  slug        String   @unique
   description String?
   stock       Int
   price       Int
-  categories  Category[]
-  Cart        Cart?      @relation(fields: [cartId], references: [id])
-  cartId      String?    @db.Uuid
+  images      String[]
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?   @default(uuid()) @map("category_id") @db.Uuid
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 }
 
 model Category {
-  id       String    @id @default(uuid()) @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz()
+
   name     String
   products Product[]
 }
