@@ -4,4 +4,5 @@ export enum ErrorCodes {
     InvalidForm = 'Invalid form',
     UserCreationFailed = 'User creation failed',
     InvalidRefreshToken = 'Invalid refresh token',
+    InvalidRequest = 'Invalid request'
 }
