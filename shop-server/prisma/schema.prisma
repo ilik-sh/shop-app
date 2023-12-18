@@ -97,7 +97,7 @@ model Product {
   description String?
   stock       Int
   price       Int
-  images      String[]
+  image      String
 
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?   @default(uuid()) @map("category_id") @db.Uuid
