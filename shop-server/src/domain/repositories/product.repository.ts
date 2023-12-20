@@ -15,6 +15,27 @@ export class ProductRepository {
         })
     }
 
+    async reduceStock(productId: string, reduceAmount: number) {
+        return await this.prisma.product.update({
+            where: {
+                id: productId
+            },
+            data: {
+                stock: {
+                    decrement: reduceAmount
+                }
+            }
+        })
+    }
+
+    async findById(productId: string) {
+        return await this.prisma.product.findFirst({
+            where: {
+                id: productId
+            }
+        })
+    }
+
     async findFiltered(dto: SearchDto) {
         return await this.prisma.product.findMany({
             where: this.createFilter(dto),
