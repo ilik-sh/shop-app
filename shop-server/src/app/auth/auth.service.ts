@@ -21,14 +21,17 @@ export class AuthService {
         return await this.userRepository.findByEmailAndPassword(userCredentials.email, hashedPassword)
     }
 
+    async findUserById(userId: string) {
+        return await this.userRepository.findById(userId)
+    }
+
     async findByRefreshToken(userCredentials: Pick<User, "refreshToken">) {
         return await this.userRepository.findByRefreshToken(userCredentials.refreshToken)
     }
 
     async createNewUser(user: Pick<User, "username" | "password" | "email">) {
         const password = await this.securityService.hashData(user.password)
-
-        return this.userRepository.createNewUser({password, ...user})
+        return this.userRepository.createNewUser({...user, password})
     }
 
     async refreshTokens(userSession: UserSessionDto) {
@@ -37,7 +40,9 @@ export class AuthService {
     }
 
     async authenticate(userSession: UserSessionDto) {
-        return await this.securityService.generateTokens(userSession)
+        const tokens = await this.securityService.generateTokens(userSession)
+        await this.userRepository.updateRefreshToken(userSession.userId, tokens.refreshToken)
+        return tokens
     }
 
     async signOut(userCredentials: Pick<User, "id">) {

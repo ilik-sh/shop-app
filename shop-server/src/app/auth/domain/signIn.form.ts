@@ -4,7 +4,6 @@ export class SignInForm {
     @IsEmail()
     email: string
 
-    @IsStrongPassword()
     password: string
 
     static from(form?: SignInForm) {

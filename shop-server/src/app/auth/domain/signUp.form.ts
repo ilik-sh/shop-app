@@ -4,7 +4,6 @@ export class SignUpForm {
     @IsEmail()
     email: string
 
-    @IsStrongPassword()
     password: string 
 
     username: string 

@@ -19,7 +19,7 @@ export class AuthController {
   @Post('/signup')
   async signUp(@Body() body: SignUpForm) {
     const form = SignUpForm.from(body) 
-    const errors = SignUpForm.validate(form)
+    const errors = await SignUpForm.validate(form)
     if (errors) {
       throw new ApiRequestException(ErrorCodes.InvalidForm, errors)
     }
@@ -41,7 +41,7 @@ export class AuthController {
   @Post('/signin')
   async signIn(@Body() body: SignInForm) {
     const form = SignInForm.from(body)
-    const errors = SignInForm.validate(form)
+    const errors = await SignInForm.validate(form)
     if (errors)  {
       throw new ApiRequestException(ErrorCodes.InvalidForm, errors)
     }
@@ -52,7 +52,6 @@ export class AuthController {
     }
 
     const session = UserSessionDto.fromEntity(existingUser)
-    
     return await this.authService.authenticate(session)
   }
 
@@ -60,7 +59,8 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   @Get('/signout')
   async signOut(@CurrentUser() user: UserSessionDto) {
-    const existingUser = await this.authService.findUserByEmailAndPassword(user)
+    console.log(user)
+    const existingUser = await this.authService.findUserById(user.userId)
     if (!existingUser) {
       throw new ApiInternalException(ErrorCodes.UserDoesNotExist)
     }
@@ -85,11 +85,5 @@ export class AuthController {
     const session = UserSessionDto.fromEntity(existingUserWithToken)
 
     return await this.authService.refreshTokens(session)
-  }
-
-  @Get('')
-  @UseGuards(AccessTokenGuard)
-  async getAll() {
-    return {message: "Authorized"}
   }
 }
