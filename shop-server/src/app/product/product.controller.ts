@@ -16,7 +16,6 @@ export class ProductController {
 
   @HttpCode(200)
   @Get('/filters')
-  @UsePipes(new ValidationPipe())
   async getWithFilters(@Query() query: SearchDto) {
     const form = SearchDto.from(query)
     const errors = await SearchDto.validate(form)
