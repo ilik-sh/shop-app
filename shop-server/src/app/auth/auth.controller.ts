@@ -59,7 +59,6 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   @Get('/signout')
   async signOut(@CurrentUser() user: UserSessionDto) {
-    console.log(user)
     const existingUser = await this.authService.findUserById(user.userId)
     if (!existingUser) {
       throw new ApiInternalException(ErrorCodes.UserDoesNotExist)

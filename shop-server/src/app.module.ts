@@ -5,6 +5,7 @@ import { AuthModule } from './app/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import securityConfig from 'config/security.config';
 import { ProductModule } from 'app/product/product.module';
+import { OrderModule } from 'app/order/order.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ProductModule } from 'app/product/product.module';
       isGlobal: true
     }),
     AuthModule,
-    ProductModule
+    ProductModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

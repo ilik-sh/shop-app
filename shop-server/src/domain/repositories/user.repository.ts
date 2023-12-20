@@ -81,15 +81,7 @@ export class UserRepository {
                     email: user.email,
                     password: user.password,
                     username: user.username,
-                    cart: {
-                        create: {
-                            total: 0
-                        }
-                    }
                 },
-                include: {
-                    cart: true
-                }
             })
         }
 }

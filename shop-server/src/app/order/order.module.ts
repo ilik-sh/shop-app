@@ -4,7 +4,6 @@ import { OrderController } from './order.controller';
 import { PrismaModule } from 'prisma/prisma.module';
 import { OrderRepository } from 'domain/repositories/order.repository';
 import { OrderItemRepository } from 'domain/repositories/orderItem.repository';
-import { ProductController } from 'app/product/product.controller';
 import { ProductRepository } from 'domain/repositories/product.repository';
 
 @Module({
