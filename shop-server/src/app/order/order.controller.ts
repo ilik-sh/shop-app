@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, UseGuards, Patch, Get } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards, Patch, Get, Delete } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CurrentUser } from 'decorators/currentUser.decorator';
 import { ApiRequestException } from 'exceptions/apiRequestException';
@@ -104,6 +104,13 @@ export class OrderController {
 
     return order
   }
+
+  @Delete('/item')
+  @HttpCode(200)
+  async removeItemFromOrder(@Body() body) {
+    return await this.orderService.deleteItemFromOrder(body.orderItemId)
+  }
+
 
   @Get('/history')
   @HttpCode(200)

@@ -30,6 +30,10 @@ export class OrderService {
         return await this.orderRepository.addItemToOrder(orderId, item)
     }
 
+    async deleteItemFromOrder(orderItemId: string) {
+        return await this.orderItemRepository.deleteOrderItem(orderItemId)
+    }
+
     async getOrderItem(orderItemId: string) {
         return await this.orderItemRepository.findById(orderItemId)
     }

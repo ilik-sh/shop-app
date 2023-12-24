@@ -95,7 +95,17 @@ export class OrderRepository {
                 id: orderId
             },
             include: {
-                items: true
+                items: {
+                    select: {
+                        quantity: true,
+                        productId: true,
+                        product: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
             }
         })
     }
@@ -105,6 +115,14 @@ export class OrderRepository {
             where: {
                 userId: userId,
                 status: "InCart"
+            },
+            include: {
+                items: {
+                    select: {
+                        quantity: true,
+                        product: true
+                    }
+                }
             }
         })
     }

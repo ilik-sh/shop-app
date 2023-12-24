@@ -15,7 +15,7 @@ export class SecurityService {
     async generateTokens(payload: UserSessionDto) {
         const accessToken = await this.service.signAsync({payload}, {
             secret: this.configService.get('SECRET_ACCESS'),
-            expiresIn: '10m'
+            expiresIn: '15s'
         })
         const refreshToken = await this.service.signAsync({payload}, {
             secret: this.configService.get('SECRET_REFRESH'),

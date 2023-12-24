@@ -13,7 +13,7 @@ async function createProducts(quantity: number) {
                 slug: faker.helpers.slugify(productName).toLowerCase(),
                 description: faker.commerce.productDescription(),
                 price: +faker.commerce.price({min: 1, max: 999, dec: 0}),
-                image: faker.image.url(),
+                image: faker.image.urlLoremFlickr({category: 'technics'}),
                 stock: faker.number.int({min: 1, max: 100}),
                 category: {
                     create: {
