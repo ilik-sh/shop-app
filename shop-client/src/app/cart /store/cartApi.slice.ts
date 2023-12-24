@@ -8,13 +8,23 @@ const authApiSlice = apiSlice.injectEndpoints({
                 url: '/order/cart'
                 }),
         }),
+
         addItemToCart: builder.mutation({
-            query: () => ({
+            query: (body: {}) => ({
                 url: '/order',
-                method: 'POST'
+                method: 'POST',
+                body
+            })
+        }),
+
+        removeItemFromCart: builder.mutation({
+            query: (body: {orderItemId: string}) => ({
+                url: '/order/item',
+                method: 'DELETE',
+                body
             })
         })
     })
 })
 
-export const {useSignInMutation, useSignUpMutation, useLazyGetCartQuery} = authApiSlice
+export const { useLazyGetCartQuery} = authApiSlice
