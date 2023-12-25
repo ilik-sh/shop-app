@@ -15,6 +15,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useAppSelector } from 'store';
 import { Link } from 'react-router-dom';
+import { Badge } from '@mui/material';
 
 const pages = ['Products'];
 const userSettings = ['Profile', 'Logout'];
@@ -25,6 +26,7 @@ export default function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const { isUser } = useAppSelector((state) => state.user)
+  const { items } = useAppSelector((state) => state.cart)
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -138,7 +140,9 @@ export default function ResponsiveAppBar() {
             <Tooltip title="Cart">
               <Link to='cart'>
                 <IconButton size="large">
-                  <ShoppingCartIcon  sx={{color: 'white'}}/>
+                  <Badge badgeContent={items.length} color='error'>
+                    <ShoppingCartIcon  sx={{color: 'white'}}/>
+                  </Badge>
                 </IconButton>
               </Link>
             </Tooltip>

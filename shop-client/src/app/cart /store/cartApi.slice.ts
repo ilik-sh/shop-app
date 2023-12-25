@@ -1,19 +1,24 @@
 import { apiSlice } from "api/apiSlice"
 import { OrderItem } from "../types/orderItem"
 
+interface Order {
+    id: string,
+    items: OrderItem[]
+    total: number
+}
+
 const authApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getCart: builder.query<OrderItem[], void>({
-            query:  () => ({
-                url: '/order/cart'
-                }),
-        }),
+      
 
         addItemToCart: builder.mutation({
-            query: (body: {}) => ({
-                url: '/order',
-                method: 'POST',
-                body
+            query: (productId: string) => ({
+                url: '/order/addItem',
+                method: 'PATCH',
+                body: {
+                    productId: productId,
+                    quantity: 1
+                }
             })
         }),
 
@@ -23,8 +28,22 @@ const authApiSlice = apiSlice.injectEndpoints({
                 method: 'DELETE',
                 body
             })
+        }),
+
+        updateItemQuantity: builder.mutation<OrderItem, {orderItemId: string}>({
+            query: (body: {orderItemId: string}) => ({
+                url: 'order/itemQuantity',
+                method: 'PATCH',
+                body
+            })
+        }),
+
+        getCart: builder.query<Order, void>({
+            query: () => ({
+                url: 'order/cart'
+            })
         })
     })
 })
 
-export const { useLazyGetCartQuery} = authApiSlice
+export const {useRemoveItemFromCartMutation, useAddItemToCartMutation, useUpdateItemQuantityMutation, useGetCartQuery} = authApiSlice

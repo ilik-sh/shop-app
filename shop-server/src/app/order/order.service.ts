@@ -27,7 +27,7 @@ export class OrderService {
     }
 
     async addItemToOrder(orderId: string, item: OrderItemDto) {
-        return await this.orderRepository.addItemToOrder(orderId, item)
+        return await this.orderItemRepository.addItemToOrder(orderId, item)
     }
 
     async deleteItemFromOrder(orderItemId: string) {
@@ -73,7 +73,6 @@ export class OrderService {
         const newTotal = items.reduce((total, currentItem) => {
             return total + (currentItem.quantity * currentItem.product.price)
         }, 0)
-        console.log(await this.orderRepository.updateOrderTotal(orderId, newTotal))
         return await this.orderRepository.updateOrderTotal(orderId, newTotal)
     }
 

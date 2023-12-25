@@ -10,6 +10,7 @@ import { SignUpForm } from './domain/signUp.form';
 import { ApiRequestException } from 'exceptions/apiRequestException';
 import { CurrentUser } from 'decorators/currentUser.decorator';
 import { RefreshForm } from './domain/refresh.form';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -69,16 +70,10 @@ export class AuthController {
 
   @Get('/refresh')
   @UseGuards(RefreshTokenGuard)
-  async refreshToken(@Body() body: RefreshForm) {
-    const form = RefreshForm.from(body)
-    const errors = await RefreshForm.validate(form)
-    if (errors) {
-      throw new ApiRequestException(ErrorCodes.InvalidForm, errors)
-    }
-
-    const existingUserWithToken = await this.authService.findByRefreshToken(form)
+  async refreshToken(@CurrentUser() user: User) {
+    const existingUserWithToken = await this.authService.findUserById(user.id)
     if (!existingUserWithToken) {
-      throw new ApiInternalException(ErrorCodes.InvalidRefreshToken)
+      throw new ApiInternalException(ErrorCodes.UserDoesNotExist)
     }
 
     const session = UserSessionDto.fromEntity(existingUserWithToken)

@@ -2,6 +2,7 @@ import { BaseQueryFn, FetchArgs, FetchBaseQueryError, fetchBaseQuery } from "@re
 import { GetState } from "@reduxjs/toolkit"
 import { RootState } from "store"
 import { setTokens, signOut } from "app/auth/store/auth.slice"
+import { setUser } from "app/user/store/user.slice"
 
 const baseQuery = fetchBaseQuery({ 
     baseUrl: 'http://localhost:3000',
@@ -43,6 +44,7 @@ export const baseQueryWithReauth: BaseQueryFn<
     if (refreshResult.data) {
       // store the new token
       api.dispatch(setTokens(refreshResult.data))
+      api.dispatch(setUser())
       // retry the initial query
       result = await baseQuery(args, api, extraOptions)
     } else {

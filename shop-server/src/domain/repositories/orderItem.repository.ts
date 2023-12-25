@@ -13,12 +13,30 @@ export class OrderItemRepository {
                 id: orderItemId
             },
             include: {
+                product: true
+                
+            }
+        })
+    }
+
+
+    async addItemToOrder(orderId: string, orderItem: OrderItemDto) {
+        return await this.prisma.orderItem.create({
+            data: {
+                quantity: orderItem.quantity,
+                order: {
+                    connect: {
+                        id: orderId
+                    }
+                },
                 product: {
-                    select: {
-                        price: true
+                    connect: {
+                        id: orderItem.productId
                     }
                 }
-                
+            },
+            include: {
+                product: true
             }
         })
     }
@@ -29,11 +47,7 @@ export class OrderItemRepository {
                 orderId: orderId
             },
             include: {
-                product: {
-                    select: {
-                        price: true
-                    }
-                }
+                product: true
             }
         })
     }
@@ -45,6 +59,9 @@ export class OrderItemRepository {
             },
             data: {
                 quantity: quantity,
+            },
+            include: {
+                product: true
             }
         })
     }

@@ -20,9 +20,10 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
         })   
     }
 
-    async validate(req: Request, payload: UserSessionDto) {
+    async validate(req: Request, payload: any) {
         const refreshToken = req.headers['authorization'].replace('Bearer', '').trim()
-        const foundUser = await this.userRepository.findByEmail(payload.email)
+        const data = payload.payload
+        const foundUser = await this.userRepository.findByEmail(data.email)
         if (!foundUser) {
             return false
         }

@@ -4,12 +4,12 @@ import { CurrentUser } from 'decorators/currentUser.decorator';
 import { ApiRequestException } from 'exceptions/apiRequestException';
 import { ErrorCodes } from 'enums/errorCode.enum';
 import { AccessTokenGuard } from 'security/guards/accessToken.guard';
-import { User } from '@prisma/client';
+import { OrderItem, User } from '@prisma/client';
 import { OrderUpdateForm } from './domain/orderUpdate.form';
 import { OrderItemUpdateForm } from './domain/orderItemUpdate.form';
 import { CreateOrderForm } from './domain/createOrder.form';
 import { ApiInternalException } from 'exceptions/apiInternalException';
-import { AddOrderItemForm } from './domain/addOrderItem.form';
+import { OrderItemDto } from 'domain/dtos/orderItem.dto';
 
 @UseGuards(AccessTokenGuard)
 @Controller('/order')
@@ -80,35 +80,41 @@ export class OrderController {
 
   @Patch('/addItem') 
   @HttpCode(200)
-  async addItemToOrder(@Body() body: AddOrderItemForm) {
-    const form = AddOrderItemForm.from(body)
-    const errors = await AddOrderItemForm.validate(form) 
+  async addItemToOrder(@CurrentUser() user: User, @Body() body: OrderItemDto) {
+    const dto = OrderItemDto.from(body)
+    const errors = await OrderItemDto.validate(dto) 
     if (errors) {
       throw new ApiRequestException(ErrorCodes.InvalidForm, errors)
     }
 
-    const product = this.orderService.getProduct(form.item.productId)
+    const product = this.orderService.getProduct(dto.productId)
     if (!product) {
       throw new ApiInternalException(ErrorCodes.ProductDoesNotExist)
     }
 
-    const insufficient = await this.orderService.validateOrderItems([form.item])
+    const insufficient = await this.orderService.validateOrderItems([dto])
     if (insufficient) {
       throw new ApiInternalException(ErrorCodes.InsufficientProduct)
     }
 
-    const order = await this.orderService.addItemToOrder(form.orderId, form.item)
+    const cart = await this.orderService.getCart(user.id)
+    if (!cart) {
+      throw new ApiInternalException(ErrorCodes.OrderDoesNotExist)
+    }
+ 
+    const order = await this.orderService.addItemToOrder(cart.id, dto)
     if (!order) {
       throw new ApiInternalException(ErrorCodes.OrderCreationFailed)
     }
 
+    const updatedOrder = await this.orderService.updateTotal(cart.id)
     return order
   }
 
   @Delete('/item')
   @HttpCode(200)
-  async removeItemFromOrder(@Body() body) {
-    return await this.orderService.deleteItemFromOrder(body.orderItemId)
+  async removeItemFromOrder(orderItemId: string) {
+    return await this.orderService.deleteItemFromOrder(orderItemId)
   }
 
 

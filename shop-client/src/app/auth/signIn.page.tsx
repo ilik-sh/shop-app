@@ -13,8 +13,9 @@ import { useAppDispatch } from 'store';
 import { useSignInMutation } from './store/authApi.slice';
 import { setTokens } from './store/auth.slice';
 import { setUser } from 'app/user/store/user.slice';
-import CustomSnackbar from './components/custom.snackbar';
+import CustomSnackbar from '../../components/customSnackbar/custom.snackbar';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'components/customSnackbar/hooks/useSnackbar';
 
 
 const initialValues = {
@@ -26,7 +27,7 @@ const initialValues = {
 export default function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [snackbar, setSnackbar] = useState(initialValues)
+  const {snackbar, handleClose, openSnackbar} = useSnackbar()
  
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -41,12 +42,6 @@ export default function SignInPage() {
     setPassword(event.target.value);
   };
 
-  const handleClose= () => {
-    setSnackbar({
-      ...snackbar,
-      open: false
-    })
-  }
 
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -56,19 +51,11 @@ export default function SignInPage() {
         .then((value: {accessToken: any, refreshToken: any}) => {
             dispatch(setTokens(value))
             dispatch(setUser())
-            setSnackbar({
-              open: true,
-              message: "Succesfullt signed in",
-              severity: 'success'
-            })
+            openSnackbar("Succesfullt signed in", "success")
             navigate('/')
           })
         .catch((error) => {
-          setSnackbar({
-            open: true,
-            message: error.data.message,
-            severity: 'error'
-          })
+          openSnackbar(error.data.errorCode, 'error')
         })
     }
   };
@@ -78,7 +65,7 @@ export default function SignInPage() {
       <CustomSnackbar 
       open={snackbar.open} 
       message={snackbar.message} 
-      severity={snackbar.severity as AlertColor} 
+      severity={snackbar.severity} 
       onClose={handleClose}/>
 
       <Container 

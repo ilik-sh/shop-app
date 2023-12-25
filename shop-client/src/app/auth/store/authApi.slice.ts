@@ -31,12 +31,7 @@ const authApiSlice = apiSlice.injectEndpoints({
             body
             })
         }),
-        getCart: builder.query<Order, void>({
-        query:  () => ({
-            url: '/order/cart'
-            }),
-        })
     })
 })
 
-export const {useSignInMutation, useSignUpMutation, useLazyGetCartQuery} = authApiSlice
+export const {useSignInMutation, useSignUpMutation} = authApiSlice

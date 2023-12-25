@@ -19,8 +19,9 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
         })   
     }
 
-    async validate(payload: UserSessionDto) {
-        const foundUser = await this.userRepository.findByEmail(payload.email)
+    async validate(payload: any) {
+        const data = payload.payload
+        const foundUser = await this.userRepository.findByEmail(data.email)
         if (!foundUser) {
             return false
         }

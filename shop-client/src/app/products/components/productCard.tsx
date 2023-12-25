@@ -8,6 +8,13 @@ import Typography from '@mui/material/Typography';
 import { Product } from '../types/product';
 import { useState } from 'react';
 import { CircularProgress } from '@mui/material';
+import { useAddItemToCartMutation } from 'app/cart /store/cartApi.slice';
+import { useAppDispatch } from 'store';
+import { OrderItem } from 'app/cart /types/orderItem';
+import { addItemToCart } from 'app/cart /store/cart.slice';
+import CustomSnackbar from 'components/customSnackbar/custom.snackbar';
+import { AlertColor } from '@mui/material';
+import { useSnackbar } from 'components/customSnackbar/hooks/useSnackbar';
 
 type Props = {
     item: Product
@@ -16,18 +23,35 @@ type Props = {
 export default function ProductCard({item}: Props) {
 
   const [inCart, setInCart] = useState(false)
+  const {snackbar, openSnackbar, handleClose} = useSnackbar()
+
+  const dispatch = useAppDispatch()
+
+  const [addItem] = useAddItemToCartMutation()
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (inCart) {
-
-    }
-    if (!inCart) {
-      
-    }
+    const productId = item.id
+    addItem(productId)
+    .unwrap()
+    .then((item: OrderItem) => {
+      console.log(item) 
+      dispatch(addItemToCart(item))
+      openSnackbar(`${item.product.name} added to cart`, 'success') 
+    })
+    .catch((error) => {
+      console.log(error)
+      openSnackbar(error.message.errorCode , 'error')
+    })
   };
 
   return (
+    <>
+      <CustomSnackbar 
+      open={snackbar.open} 
+      message={snackbar.message} 
+      severity={snackbar.severity} 
+      onClose={handleClose}/>
     <Card sx={{ 
       maxWidth: 345, 
       display: 'flex', 
@@ -56,22 +80,17 @@ export default function ProductCard({item}: Props) {
         <Typography variant="h5" color="primary">
           {item.price + '$'}
         </Typography>
-        {item.stock > 0
-        ? <Button
+         <Button
+        onClick={handleClick}
         variant='outlined'
-        color='primary'
+        color="success"
+        disabled={item.stock < 0}
         >
           Add to cart
         </Button>
-        : <Button
-        variant='outlined'
-        disabled={true}
-        >
-          Out of stock
-        </Button>
-      }
-        
       </CardActions>
     </Card>
+    </>
+    
   );
 }

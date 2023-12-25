@@ -13,19 +13,15 @@ import { useAppDispatch } from 'store';
 import { useSignUpMutation } from './store/authApi.slice';
 import { setTokens } from './store/auth.slice';
 import { setUser } from 'app/user/store/user.slice';
-import CustomSnackbar from './components/custom.snackbar';
-
-const initialValues = {
-    open: false,
-    message: '',
-    severity: 'success'
-  }
+import CustomSnackbar from '../../components/customSnackbar/custom.snackbar';
+import { useSnackbar } from 'components/customSnackbar/hooks/useSnackbar';
 
 export default function SignUpPage()  {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('')
-  const [snackbar, setSnackbar] = useState(initialValues)
+  const {snackbar, openSnackbar, handleClose} = useSnackbar()
+
  
   const dispatch = useAppDispatch()
 
@@ -43,31 +39,16 @@ export default function SignUpPage()  {
     setUsername(event.target.value);
   };
 
-  const handleClose= () => {
-    setSnackbar({
-      ...snackbar,
-      open: false
-    })
-  }
-
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (email && password) {
         signIn({email, password, username})
         .unwrap()
         .then(() => {
-            setSnackbar({
-                open: true,
-                message: 'Succesfully signed up',
-                severity: 'success'
-              })
+            openSnackbar('Succesfully signed up', 'success')
           })
         .catch((error) => {
-          setSnackbar({
-            open: true,
-            message: error.data.message,
-            severity: 'error'
-          })
+          openSnackbar(error.data.message, 'error')
         })
     }
   };
@@ -77,7 +58,7 @@ export default function SignUpPage()  {
       <CustomSnackbar 
       open={snackbar.open} 
       message={snackbar.message} 
-      severity={snackbar.severity as AlertColor}
+      severity={snackbar.severity}
       onClose={handleClose}/>
       <Container 
         component="main" 
@@ -140,7 +121,7 @@ export default function SignUpPage()  {
               color="primary"
               onClick={handleSubmit}
             >
-              Sign In
+              Sign Up
             </Button>
           </Box>
         </Box>

@@ -29,7 +29,13 @@ export class OrderRepository {
                 }
             },
             include: {
-                items: true
+                items: {
+                    select: {
+                        quantity: true,
+                        product: true,
+                        id: true
+                    }
+                }
             }
         })
     }
@@ -46,6 +52,15 @@ export class OrderRepository {
                         quantity: orderItem.quantity
                     }
                 }
+            },
+            include: {
+                items: {
+                    select: {
+                        quantity: true,
+                        product: true,
+                        id: true
+                    }
+                }
             }
         })
     }
@@ -59,7 +74,13 @@ export class OrderRepository {
                 status: status
             },
             include: {
-                items: true
+                items: {
+                    select: {
+                        quantity: true,
+                        product: true,
+                        id: true
+                    }
+                }
             }
         })
     }
@@ -73,7 +94,13 @@ export class OrderRepository {
                 total: total
             },
             include: {
-                items: true
+                items: {
+                    select: {
+                        quantity: true,
+                        product: true,
+                        id: true
+                    }
+                }
             }
         })
     }
@@ -84,7 +111,13 @@ export class OrderRepository {
                 userId: userId
             },
             include: {
-                items: true
+                items: {
+                    select: {
+                        quantity: true,
+                        product: true,
+                        id: true
+                    }
+                }
             }
         })
     }
@@ -98,12 +131,8 @@ export class OrderRepository {
                 items: {
                     select: {
                         quantity: true,
-                        productId: true,
-                        product: {
-                            select: {
-                                name: true
-                            }
-                        }
+                        product: true,
+                        id: true
                     }
                 }
             }
@@ -120,7 +149,8 @@ export class OrderRepository {
                 items: {
                     select: {
                         quantity: true,
-                        product: true
+                        product: true,
+                        id: true
                     }
                 }
             }

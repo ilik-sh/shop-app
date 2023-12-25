@@ -81,6 +81,12 @@ export class UserRepository {
                     email: user.email,
                     password: user.password,
                     username: user.username,
+                    orders: {
+                        create: {
+                            status: 'InCart',
+                            total: 0
+                        }
+                    }
                 },
             })
         }
